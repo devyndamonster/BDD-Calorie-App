@@ -1,4 +1,8 @@
 import { Button, Card, Form, Input, List } from 'antd-mobile'
+import { useMemo, useState } from 'react'
+import type { FoodSuggestion } from '../data/cleanFood'
+import { portionFor, searchFoods } from '../data/searchFoods'
+import { useFoodIndex } from '../data/useFoodIndex'
 import { validateCalories, validateName, type Food } from '../domain/food'
 
 type Props = {
@@ -14,6 +18,19 @@ const rule = (error: string | null) => (error ? Promise.reject(new Error(error))
 
 export default function FoodSection({ foods, onAdd }: Props) {
   const [form] = Form.useForm<FormValues>()
+  const index = useFoodIndex()
+  const [nameValue, setNameValue] = useState('')
+  const [dismissed, setDismissed] = useState(false)
+  const suggestions = useMemo(
+    () => (dismissed ? [] : searchFoods(index, nameValue)),
+    [index, nameValue, dismissed],
+  )
+
+  function pickSuggestion(suggestion: FoodSuggestion) {
+    form.setFieldsValue({ name: suggestion.name, calories: String(portionFor(suggestion).calories) })
+    setNameValue(suggestion.name)
+    setDismissed(true)
+  }
 
   function handleFinish(values: FormValues) {
     onAdd(values.name ?? '', toCalories(values.calories))
@@ -37,8 +54,25 @@ export default function FoodSection({ foods, onAdd }: Props) {
           label="Food name"
           rules={[{ validator: (_, value?: string) => rule(validateName(value ?? '')) }]}
         >
-          <Input placeholder="e.g. Apple" clearable />
+          <Input placeholder="e.g. Apple" clearable onChange={(value) => { setNameValue(value); setDismissed(false) }} />
         </Form.Item>
+        {suggestions.length > 0 && (
+          <List data-testid="suggestions">
+            {suggestions.map((suggestion) => {
+              const portion = portionFor(suggestion)
+              return (
+                <List.Item
+                  key={suggestion.id}
+                  data-testid="suggestion"
+                  description={`${portion.label} · ${portion.calories} kcal`}
+                  onClick={() => pickSuggestion(suggestion)}
+                >
+                  {suggestion.name}
+                </List.Item>
+              )
+            })}
+          </List>
+        )}
         <Form.Item
           name="calories"
           label="Calories"
@@ -57,3 +91,4 @@ export default function FoodSection({ foods, onAdd }: Props) {
     </Card>
   )
 }
+

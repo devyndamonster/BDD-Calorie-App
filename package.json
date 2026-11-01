@@ -9,7 +9,9 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:bdd": "bddgen && playwright test"
+    "test:bdd": "bddgen && playwright test",
+    "data:download": "node scripts/download-usda.mjs",
+    "data:build": "node --experimental-strip-types --no-warnings scripts/build-food-data.ts"
   },
   "dependencies": {
     "antd-mobile": "^5.43.0",

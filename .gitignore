@@ -27,3 +27,6 @@ dist-ssr
 .features-gen
 playwright-report
 test-results
+
+# Raw USDA data
+data/usda

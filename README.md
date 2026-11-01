@@ -15,3 +15,12 @@ npm run dev        # start the dev server
 npm test           # Vitest unit tests
 npm run test:bdd   # Playwright-BDD scenarios (iPhone WebKit)
 ```
+
+## Food data
+
+Food-name suggestions come from USDA FoodData Central (SR Legacy, CC0). The cleaned list is committed in `src/data/foods.json`; to regenerate it:
+
+```
+npm run data:download   # download raw USDA data into data/usda (gitignored)
+npm run data:build      # clean it into src/data/foods.json
+```
