@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
-import { openTab, expectSnapshot } from '../support/ui'
+import { openTab, expectSnapshot, tabContent } from '../support/ui'
 
 const { When, Then } = createBdd()
 
@@ -20,25 +20,27 @@ When('I add the food', async ({ page }) => {
 Then('I see the suggestion {string}', async ({ page }, name: string) => {
   const suggestion = page.getByTestId('suggestion').filter({ hasText: name })
   await expect(suggestion).toBeVisible()
-  await expectSnapshot(page, suggestion)
+  await expectSnapshot(page, tabContent(page))
 })
 
 Then('I see no suggestions', async ({ page }) => {
   await expect(page.getByTestId('suggestion')).toHaveCount(0)
-  await expectSnapshot(page, page.getByLabel('Food name'))
+  await expectSnapshot(page, tabContent(page))
 })
 
 Then('the food name is {string}', async ({ page }, name: string) => {
   const input = page.getByLabel('Food name')
   await expect(input).toHaveValue(name)
-  await expectSnapshot(page, input)
+  await expectSnapshot(page, tabContent(page))
 })
 
 Then('the calories are {int}', async ({ page }, calories: number) => {
   const input = page.getByLabel('Calories')
   await expect(input).toHaveValue(String(calories))
-  await expectSnapshot(page, input)
+  await expectSnapshot(page, tabContent(page))
 })
+
+
 
 
 
