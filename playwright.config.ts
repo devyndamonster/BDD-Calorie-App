@@ -9,6 +9,7 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   reporter: 'html',
+  expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.1, threshold: 0.3 } },
   snapshotPathTemplate: 'features/__screenshots__/{testFileName}/{arg}-{projectName}-{platform}{ext}',
   use: { baseURL: 'http://localhost:5173' },
   projects: [{ name: 'iphone-webkit', use: { ...devices['iPhone 15'] } }],
@@ -18,3 +19,4 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
   },
 })
+

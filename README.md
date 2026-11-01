@@ -15,6 +15,7 @@ npm run dev        # start the dev server
 npm test           # Vitest unit tests
 npm run test:bdd   # Playwright-BDD scenarios (iPhone WebKit)
 npm run test:bdd:update  # accept intentional visual changes (screenshots in features/__screenshots__)
+# Screenshots tolerate minor pixel noise (see playwright.config.ts); only update baselines for real visual changes
 ```
 
 ## Food data
@@ -25,3 +26,4 @@ Food-name suggestions come from USDA FoodData Central (SR Legacy, CC0). The clea
 npm run data:download   # download raw USDA data into data/usda (gitignored)
 npm run data:build      # clean it into src/data/foods.json
 ```
+
