@@ -53,10 +53,10 @@ When('I view the date {string}', async ({ page }, date: string) => {
   await page.getByRole('textbox', { name: 'Date' }).fill(date)
 })
 
-When('I log the food {string}', async ({ page }, name: string) => {
+When('I log the food {string} for {string}', async ({ page }, name: string, meal: string) => {
   await openTab(page, 'Log')
   await page.getByLabel('Food to log').getByText(name, { exact: true }).click()
-  await page.getByRole('button', { name: 'Log food' }).click()
+  await page.getByRole('button', { name: meal, exact: true }).click()
 })
 
 When('I remove {string} from the daily log', async ({ page }, name: string) => {
@@ -83,8 +83,6 @@ Then('the daily total is {int} calories', async ({ page }, total: number) => {
   await expect(totalText).toBeVisible()
   await expectSnapshot(page, tabContent(page))
 })
-
-
 
 
 
