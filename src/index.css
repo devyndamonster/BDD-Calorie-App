@@ -29,6 +29,13 @@ main {
   padding-top: 0;
 }
 
+.budget-summary {
+  padding: 8px 0 12px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
 .empty-note {
   padding: 12px;
   text-align: center;
