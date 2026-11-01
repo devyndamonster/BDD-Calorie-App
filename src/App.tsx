@@ -52,7 +52,7 @@ export default function App() {
             selectedFoodId={selectedFoodId}
             onDateChange={setDate}
             onSelectFood={setSelectedFoodId}
-            onLog={(foodId) => updateEntries([...entries, createLogEntry(foodId, date)])}
+            onLog={(foodId, meal) => updateEntries([...entries, createLogEntry(foodId, date, meal)])}
             onRemove={(entryId) => updateEntries(entries.filter((e) => e.id !== entryId))}
           />
         </>
@@ -63,4 +63,5 @@ export default function App() {
     </main>
   )
 }
+
 
