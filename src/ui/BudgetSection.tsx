@@ -2,7 +2,6 @@ import { Button, Card, Form, Input } from 'antd-mobile'
 import { validateBudget } from '../domain/budget'
 
 type Props = {
-  date: string
   onSetBudget: (calories: number) => void
 }
 
@@ -10,12 +9,12 @@ type FormValues = { budget?: string }
 
 const toCalories = (value?: string) => (value === undefined || value.trim() === '' ? NaN : Number(value))
 
-export default function BudgetSection({ date, onSetBudget }: Props) {
+export default function BudgetSection({ onSetBudget }: Props) {
   const [form] = Form.useForm<FormValues>()
 
   return (
     <Card title="Daily budget" className="section" data-testid="budget-form">
-      <div className="budget-date">Budget for {date}</div>
+      <div className="budget-date">Applies from the selected date until you change it</div>
       <Form
         form={form}
         layout="vertical"
@@ -47,4 +46,5 @@ export default function BudgetSection({ date, onSetBudget }: Props) {
     </Card>
   )
 }
+
 

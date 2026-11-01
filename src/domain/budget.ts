@@ -8,7 +8,9 @@ export function validateBudget(calories: number): string | null {
 }
 
 export function budgetForDate(budgets: DailyBudget[], date: string): number | null {
-  return budgets.find((budget) => budget.date === date)?.calories ?? null
+  const applicable = budgets.filter((budget) => budget.date <= date)
+  if (applicable.length === 0) return null
+  return applicable.reduce((latest, budget) => (budget.date > latest.date ? budget : latest)).calories
 }
 
 export function setBudget(budgets: DailyBudget[], date: string, calories: number): DailyBudget[] {
