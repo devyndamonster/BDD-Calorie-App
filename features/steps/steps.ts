@@ -3,8 +3,8 @@ import { createBdd } from 'playwright-bdd'
 
 const { Given, When, Then } = createBdd()
 
-const foodList = (page: Page) => page.getByRole('list', { name: 'Foods' })
-const dailyLog = (page: Page) => page.getByRole('list', { name: 'Daily log' })
+const foodItems = (page: Page) => page.getByTestId('food-item')
+const logItems = (page: Page) => page.getByTestId('log-item')
 
 Given('I open the app', async ({ page }) => {
   await page.goto('/')
@@ -27,43 +27,38 @@ When('I add a food {string} with {int} calories', async ({ page }, name: string,
 Then(
   'I see the food {string} with {int} calories in the food list',
   async ({ page }, name: string, calories: number) => {
-    const item = foodList(page).getByRole('listitem').filter({ hasText: name })
+    const item = foodItems(page).filter({ hasText: name })
     await expect(item).toContainText(`${calories} kcal`)
   },
 )
 
 Then('I see the error {string}', async ({ page }, message: string) => {
-  await expect(page.getByRole('alert')).toHaveText(message)
+  await expect(page.getByText(message)).toBeVisible()
 })
 
 Then('the food list is empty', async ({ page }) => {
-  await expect(foodList(page).getByRole('listitem')).toHaveCount(0)
+  await expect(foodItems(page)).toHaveCount(0)
 })
 
 When('I view the date {string}', async ({ page }, date: string) => {
-  await page.getByLabel('Date').fill(date)
+  await page.getByRole('textbox', { name: 'Date' }).fill(date)
 })
 
 When('I log the food {string}', async ({ page }, name: string) => {
-  await page.getByLabel('Food to log').selectOption({ label: name })
+  await page.getByLabel('Food to log').getByText(name, { exact: true }).click()
   await page.getByRole('button', { name: 'Log food' }).click()
 })
 
 When('I remove {string} from the daily log', async ({ page }, name: string) => {
-  await dailyLog(page)
-    .getByRole('listitem')
-    .filter({ hasText: name })
-    .first()
-    .getByRole('button', { name: 'Remove' })
-    .click()
+  await logItems(page).filter({ hasText: name }).first().getByRole('button', { name: 'Remove' }).click()
 })
 
 Then('I see {string} in the daily log', async ({ page }, name: string) => {
-  await expect(dailyLog(page).getByRole('listitem').filter({ hasText: name })).toHaveCount(1)
+  await expect(logItems(page).filter({ hasText: name })).toHaveCount(1)
 })
 
 Then('the daily log is empty', async ({ page }) => {
-  await expect(dailyLog(page).getByRole('listitem')).toHaveCount(0)
+  await expect(logItems(page)).toHaveCount(0)
 })
 
 Then('the daily total is {int} calories', async ({ page }, total: number) => {

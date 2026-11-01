@@ -4,10 +4,16 @@ export type Food = {
   calories: number
 }
 
+export function validateName(name: string): string | null {
+  return name.trim() === '' ? 'Name is required' : null
+}
+
+export function validateCalories(calories: number): string | null {
+  return Number.isFinite(calories) && calories >= 0 ? null : 'Calories must be zero or more'
+}
+
 export function validateFood(name: string, calories: number): string | null {
-  if (name.trim() === '') return 'Name is required'
-  if (!Number.isFinite(calories) || calories < 0) return 'Calories must be zero or more'
-  return null
+  return validateName(name) ?? validateCalories(calories)
 }
 
 export function createFood(name: string, calories: number): Food {

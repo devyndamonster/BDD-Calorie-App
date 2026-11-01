@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Button, Card, Form, Input, List, Selector } from 'antd-mobile'
 import type { Food } from '../domain/food'
 import { dailyTotal, entriesForDate, type LogEntry } from '../domain/log'
 
@@ -6,50 +6,63 @@ type Props = {
   foods: Food[]
   entries: LogEntry[]
   date: string
+  selectedFoodId: string
   onDateChange: (date: string) => void
+  onSelectFood: (foodId: string) => void
   onLog: (foodId: string) => void
   onRemove: (entryId: string) => void
 }
 
-export default function DailyLogSection({ foods, entries, date, onDateChange, onLog, onRemove }: Props) {
-  const [selectedId, setSelectedId] = useState('')
+export default function DailyLogSection({
+  foods,
+  entries,
+  date,
+  selectedFoodId,
+  onDateChange,
+  onSelectFood,
+  onLog,
+  onRemove,
+}: Props) {
   const dayEntries = entriesForDate(entries, date)
-  const foodId = foods.some((f) => f.id === selectedId) ? selectedId : (foods[0]?.id ?? '')
+  const foodId = foods.some((f) => f.id === selectedFoodId) ? selectedFoodId : (foods[0]?.id ?? '')
 
   return (
-    <section>
-      <h2>Daily log</h2>
-      <label>
-        Date
-        <input type="date" value={date} onChange={(e) => e.target.value && onDateChange(e.target.value)} />
-      </label>
-      <label>
-        Food to log
-        <select value={foodId} onChange={(e) => setSelectedId(e.target.value)}>
-          {foods.map((food) => (
-            <option key={food.id} value={food.id}>
-              {food.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <button type="button" disabled={foods.length === 0} onClick={() => onLog(foodId)}>
+    <Card title="Daily log" className="section">
+      <Form layout="vertical">
+        <Form.Item label="Date">
+          <Input aria-label="Date" type="date" value={date} onChange={(value) => value && onDateChange(value)} />
+        </Form.Item>
+        <Form.Item label="Food to log">
+          <Selector
+            aria-label="Food to log"
+            options={foods.map((food) => ({ label: food.name, value: food.id }))}
+            value={foodId ? [foodId] : []}
+            onChange={(values) => values[0] && onSelectFood(values[0])}
+          />
+        </Form.Item>
+      </Form>
+      <Button block color="primary" size="large" disabled={foods.length === 0} onClick={() => onLog(foodId)}>
         Log food
-      </button>
-      <ul aria-label="Daily log">
+      </Button>
+      <List data-testid="log-list">
         {dayEntries.map((entry) => {
           const food = foods.find((f) => f.id === entry.foodId)
           return (
-            <li key={entry.id}>
+            <List.Item
+              key={entry.id}
+              data-testid="log-item"
+              extra={
+                <Button size="mini" color="danger" fill="outline" onClick={() => onRemove(entry.id)}>
+                  Remove
+                </Button>
+              }
+            >
               {food?.name ?? 'Unknown food'}
-              <button type="button" onClick={() => onRemove(entry.id)}>
-                Remove
-              </button>
-            </li>
+            </List.Item>
           )
         })}
-      </ul>
-      <p>Total: {dailyTotal(entries, foods, date)} kcal</p>
-    </section>
+      </List>
+      <div className="total">Total: {dailyTotal(entries, foods, date)} kcal</div>
+    </Card>
   )
 }

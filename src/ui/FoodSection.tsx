@@ -1,57 +1,59 @@
-import { useState, type FormEvent } from 'react'
-import { validateFood, type Food } from '../domain/food'
+import { Button, Card, Form, Input, List } from 'antd-mobile'
+import { validateCalories, validateName, type Food } from '../domain/food'
 
 type Props = {
   foods: Food[]
   onAdd: (name: string, calories: number) => void
 }
 
-export default function FoodSection({ foods, onAdd }: Props) {
-  const [name, setName] = useState('')
-  const [calories, setCalories] = useState('')
-  const [error, setError] = useState<string | null>(null)
+type FormValues = { name?: string; calories?: string }
 
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault()
-    const amount = calories.trim() === '' ? NaN : Number(calories)
-    const validationError = validateFood(name, amount)
-    if (validationError) {
-      setError(validationError)
-      return
-    }
-    onAdd(name, amount)
-    setName('')
-    setCalories('')
-    setError(null)
+const toCalories = (value?: string) => (value === undefined || value.trim() === '' ? NaN : Number(value))
+
+const rule = (error: string | null) => (error ? Promise.reject(new Error(error)) : Promise.resolve())
+
+export default function FoodSection({ foods, onAdd }: Props) {
+  const [form] = Form.useForm<FormValues>()
+
+  function handleFinish(values: FormValues) {
+    onAdd(values.name ?? '', toCalories(values.calories))
+    form.resetFields()
   }
 
   return (
-    <section>
-      <h2>Foods</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Food name
-          <input value={name} onChange={(e) => setName(e.target.value)} />
-        </label>
-        <label>
-          Calories
-          <input
-            type="number"
-            inputMode="numeric"
-            value={calories}
-            onChange={(e) => setCalories(e.target.value)}
-          />
-        </label>
-        <button type="submit">Add food</button>
-        {error && <p role="alert">{error}</p>}
-      </form>
-      <ul aria-label="Foods">
+    <Card title="Foods" className="section">
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleFinish}
+        footer={
+          <Button block type="submit" color="primary" size="large">
+            Add food
+          </Button>
+        }
+      >
+        <Form.Item
+          name="name"
+          label="Food name"
+          rules={[{ validator: (_, value?: string) => rule(validateName(value ?? '')) }]}
+        >
+          <Input placeholder="e.g. Apple" clearable />
+        </Form.Item>
+        <Form.Item
+          name="calories"
+          label="Calories"
+          rules={[{ validator: (_, value?: string) => rule(validateCalories(toCalories(value))) }]}
+        >
+          <Input type="number" inputMode="numeric" placeholder="kcal" />
+        </Form.Item>
+      </Form>
+      <List data-testid="food-list">
         {foods.map((food) => (
-          <li key={food.id}>
-            {food.name} — {food.calories} kcal
-          </li>
+          <List.Item key={food.id} data-testid="food-item" extra={`${food.calories} kcal`}>
+            {food.name}
+          </List.Item>
         ))}
-      </ul>
-    </section>
+      </List>
+    </Card>
   )
 }

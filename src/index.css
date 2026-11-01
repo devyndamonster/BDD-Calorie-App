@@ -1,4 +1,40 @@
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
+  background: var(--adm-color-box);
+  color: var(--adm-color-text);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+
+.page-title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.section {
+  margin: 12px;
+}
+
+.section .adm-card-body {
+  padding-top: 0;
+}
+
+.total {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--adm-color-box);
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
 }

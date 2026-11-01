@@ -12,6 +12,7 @@
     "test:bdd": "bddgen && playwright test"
   },
   "dependencies": {
+    "antd-mobile": "^5.43.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
