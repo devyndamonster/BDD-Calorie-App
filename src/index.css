@@ -66,3 +66,16 @@ main {
   font-weight: 700;
   text-align: center;
 }
+
+.meal-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.meal-title {
+  margin-top: 12px;
+  font-weight: 600;
+  color: var(--adm-color-weak);
+}

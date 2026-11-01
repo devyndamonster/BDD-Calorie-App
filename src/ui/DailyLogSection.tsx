@@ -1,6 +1,6 @@
 import { Button, Card, Form, Input, List, Selector } from 'antd-mobile'
 import type { Food } from '../domain/food'
-import { dailyTotal, entriesForDate, type LogEntry } from '../domain/log'
+import { MEALS, dailyTotal, entriesByMeal, type LogEntry, type Meal } from '../domain/log'
 
 type Props = {
   foods: Food[]
@@ -9,7 +9,7 @@ type Props = {
   selectedFoodId: string
   onDateChange: (date: string) => void
   onSelectFood: (foodId: string) => void
-  onLog: (foodId: string) => void
+  onLog: (foodId: string, meal: Meal) => void
   onRemove: (entryId: string) => void
 }
 
@@ -23,7 +23,7 @@ export default function DailyLogSection({
   onLog,
   onRemove,
 }: Props) {
-  const dayEntries = entriesForDate(entries, date)
+  const groups = entriesByMeal(entries, date)
   const foodId = foods.some((f) => f.id === selectedFoodId) ? selectedFoodId : (foods[0]?.id ?? '')
 
   return (
@@ -41,30 +41,46 @@ export default function DailyLogSection({
           />
         </Form.Item>
       </Form>
-      <Button block color="primary" size="large" disabled={foods.length === 0} onClick={() => onLog(foodId)}>
-        Log food
-      </Button>
+      <div className="meal-buttons">
+        {MEALS.map((meal) => (
+          <Button
+            key={meal}
+            color="primary"
+            size="small"
+            disabled={foods.length === 0}
+            onClick={() => onLog(foodId, meal)}
+          >
+            {meal}
+          </Button>
+        ))}
+      </div>
       <div data-testid="log-summary">
-      <List data-testid="log-list">
-        {dayEntries.map((entry) => {
-          const food = foods.find((f) => f.id === entry.foodId)
-          return (
-            <List.Item
-              key={entry.id}
-              data-testid="log-item"
-              extra={
-                <Button size="mini" color="danger" fill="outline" onClick={() => onRemove(entry.id)}>
-                  Remove
-                </Button>
-              }
-            >
-              {food?.name ?? 'Unknown food'}
-            </List.Item>
-          )
-        })}
-      </List>
-      <div className="total">Total: {dailyTotal(entries, foods, date)} kcal</div>
+        {groups.map((group) => (
+          <div key={group.meal} data-testid={`meal-${group.meal}`}>
+            <div className="meal-title">{group.meal}</div>
+            <List data-testid="log-list">
+              {group.entries.map((entry) => {
+                const food = foods.find((f) => f.id === entry.foodId)
+                return (
+                  <List.Item
+                    key={entry.id}
+                    data-testid="log-item"
+                    extra={
+                      <Button size="mini" color="danger" fill="outline" onClick={() => onRemove(entry.id)}>
+                        Remove
+                      </Button>
+                    }
+                  >
+                    {food?.name ?? 'Unknown food'}
+                  </List.Item>
+                )
+              })}
+            </List>
+          </div>
+        ))}
+        <div className="total">Total: {dailyTotal(entries, foods, date)} kcal</div>
       </div>
     </Card>
   )
 }
+
