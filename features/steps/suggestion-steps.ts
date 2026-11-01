@@ -1,9 +1,11 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { openTab } from '../support/ui'
 
 const { When, Then } = createBdd()
 
 When('I type {string} in the food name', async ({ page }, text: string) => {
+  await openTab(page, 'Food')
   await page.getByLabel('Food name').fill(text)
 })
 
@@ -37,4 +39,5 @@ Then('the calories are {int}', async ({ page }, calories: number) => {
   await expect(input).toHaveValue(String(calories))
   await expect(input).toHaveScreenshot()
 })
+
 

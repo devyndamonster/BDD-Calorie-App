@@ -7,10 +7,13 @@ import { loadBudgets, saveBudgets } from './storage/budgetRepository'
 import { loadFoods, saveFoods } from './storage/foodRepository'
 import { loadEntries, saveEntries } from './storage/logRepository'
 import BudgetSection from './ui/BudgetSection'
+import BudgetSummary from './ui/BudgetSummary'
 import DailyLogSection from './ui/DailyLogSection'
 import FoodSection from './ui/FoodSection'
+import Tabs, { type TabKey } from './ui/Tabs'
 
 export default function App() {
+  const [tab, setTab] = useState<TabKey>('log')
   const [foods, setFoods] = useState<Food[]>(loadFoods)
   const [entries, setEntries] = useState<LogEntry[]>(loadEntries)
   const [budgets, setBudgets] = useState<DailyBudget[]>(loadBudgets)
@@ -39,22 +42,24 @@ export default function App() {
       <NavBar back={null}>
         <h1 className="page-title">Calorie Tracker</h1>
       </NavBar>
-      <BudgetSection
-        consumed={dailyTotal(entries, foods, date)}
-        budget={budgetForDate(budgets, date)}
-        onSetBudget={updateBudget}
-      />
-      <DailyLogSection
-        foods={foods}
-        entries={entries}
-        date={date}
-        selectedFoodId={selectedFoodId}
-        onDateChange={setDate}
-        onSelectFood={setSelectedFoodId}
-        onLog={(foodId) => updateEntries([...entries, createLogEntry(foodId, date)])}
-        onRemove={(entryId) => updateEntries(entries.filter((e) => e.id !== entryId))}
-      />
-      <FoodSection foods={foods} onAdd={addFood} />
+      {tab === 'log' && (
+        <>
+          <BudgetSummary consumed={dailyTotal(entries, foods, date)} budget={budgetForDate(budgets, date)} />
+          <DailyLogSection
+            foods={foods}
+            entries={entries}
+            date={date}
+            selectedFoodId={selectedFoodId}
+            onDateChange={setDate}
+            onSelectFood={setSelectedFoodId}
+            onLog={(foodId) => updateEntries([...entries, createLogEntry(foodId, date)])}
+            onRemove={(entryId) => updateEntries(entries.filter((e) => e.id !== entryId))}
+          />
+        </>
+      )}
+      {tab === 'food' && <FoodSection foods={foods} onAdd={addFood} />}
+      {tab === 'me' && <BudgetSection date={date} onSetBudget={updateBudget} />}
+      <Tabs active={tab} onChange={setTab} />
     </main>
   )
 }
