@@ -58,8 +58,9 @@ export default function App() {
         </>
       )}
       {tab === 'food' && <FoodSection foods={foods} onAdd={addFood} />}
-      {tab === 'me' && <BudgetSection date={date} onSetBudget={updateBudget} />}
+      {tab === 'me' && <BudgetSection onSetBudget={updateBudget} />}
       <Tabs active={tab} onChange={setTab} />
     </main>
   )
 }
+

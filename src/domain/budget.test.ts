@@ -30,6 +30,20 @@ describe('budgetForDate', () => {
   it('is null when no budget is set', () => {
     expect(budgetForDate([], '2026-11-01')).toBeNull()
   })
+
+  it('carries the latest earlier budget forward to later days', () => {
+    const budgets = [
+      { date: '2026-11-03', calories: 1800 },
+      { date: '2026-11-01', calories: 2050 },
+    ]
+    expect(budgetForDate(budgets, '2026-11-01')).toBe(2050)
+    expect(budgetForDate(budgets, '2026-11-02')).toBe(2050)
+    expect(budgetForDate(budgets, '2026-12-01')).toBe(1800)
+  })
+
+  it('is null for days before the first budget', () => {
+    expect(budgetForDate([{ date: '2026-11-02', calories: 2050 }], '2026-11-01')).toBeNull()
+  })
 })
 
 describe('budgetSummary', () => {
