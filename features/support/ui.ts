@@ -29,3 +29,51 @@ export async function expectSnapshot(page: Page, locator: Locator) {
 
 
 export const tabContent = (page: Page) => page.getByTestId('tab-content')
+
+export async function dragLogItem(page: Page, name: string, direction: 'left' | 'right') {
+  const item = logItems(page).filter({ hasText: name }).first()
+  const box = await item.boundingBox()
+  if (!box) throw new Error(`Log item "${name}" is not visible`)
+  const y = box.y + box.height / 2
+  const from = box.x + box.width * (direction === 'left' ? 0.8 : 0.2)
+  const to = box.x + box.width * (direction === 'left' ? 0.2 : 0.8)
+  await item.evaluate(
+    async (el, { from, to, y }) => {
+      const fire = (type: string, x: number) => {
+        const touch = { identifier: 1, target: el, clientX: x, clientY: y, pageX: x, pageY: y }
+        const event = new Event(type, { bubbles: true, cancelable: true })
+        Object.defineProperties(event, {
+          touches: { value: type === 'touchend' ? [] : [touch] },
+          targetTouches: { value: type === 'touchend' ? [] : [touch] },
+          changedTouches: { value: [touch] },
+        })
+        el.dispatchEvent(event)
+      }
+      fire('touchstart', from)
+      for (let i = 1; i <= 10; i++) {
+        fire('touchmove', from + ((to - from) * i) / 10)
+        await new Promise((resolve) => setTimeout(resolve, 16))
+      }
+      fire('touchend', to)
+    },
+    { from, to, y },
+  )
+}
+
+const swipeRow = (page: Page, name: string) =>
+  logItems(page)
+    .filter({ hasText: name })
+    .first()
+    .locator('xpath=ancestor::div[contains(concat(" ",normalize-space(@class)," ")," adm-swipe-action ")][1]')
+
+export const removeAction = (page: Page, name: string) => swipeRow(page, name).getByText('Remove', { exact: true })
+
+// The action sits clipped beside the item until it is slid into view.
+export async function isRemoveRevealed(page: Page, name: string) {
+  const row = swipeRow(page, name)
+  const button = removeAction(page, name)
+  const rowBox = await row.boundingBox()
+  const buttonBox = await button.boundingBox()
+  if (!rowBox || !buttonBox) return false
+  return buttonBox.x + buttonBox.width <= rowBox.x + rowBox.width + 1
+}

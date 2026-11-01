@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
-import { foodItems, logItems, openTab, expectSnapshot, tabContent } from '../support/ui'
+import { foodItems, logItems, openTab, expectSnapshot, tabContent, dragLogItem, isRemoveRevealed, removeAction } from '../support/ui'
 
 const { Given, When, Then } = createBdd()
 
@@ -61,7 +61,8 @@ When('I log the food {string} for {string}', async ({ page }, name: string, meal
 
 When('I remove {string} from the daily log', async ({ page }, name: string) => {
   await openTab(page, 'Log')
-  await logItems(page).filter({ hasText: name }).first().getByRole('button', { name: 'Remove' }).click()
+  await dragLogItem(page, name, 'left')
+  await removeAction(page, name).click()
 })
 
 Then('I see {string} in the daily log', async ({ page }, name: string) => {
@@ -84,6 +85,17 @@ Then('the daily total is {int} calories', async ({ page }, total: number) => {
   await expectSnapshot(page, tabContent(page))
 })
 
+When('I slide {string} to the {word}', async ({ page }, name: string, direction: 'left' | 'right') => {
+  await openTab(page, 'Log')
+  await dragLogItem(page, name, direction)
+})
 
+Then('the remove button for {string} is shown', async ({ page }, name: string) => {
+  await expect.poll(() => isRemoveRevealed(page, name)).toBe(true)
+  await expectSnapshot(page, tabContent(page))
+})
 
-
+Then('the remove button for {string} is hidden', async ({ page }, name: string) => {
+  await isRemoveRevealed(page, name)
+  await expectSnapshot(page, tabContent(page))
+})

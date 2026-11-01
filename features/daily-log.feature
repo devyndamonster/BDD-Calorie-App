@@ -42,3 +42,12 @@ Feature: Daily log
     And I view the date "2026-11-01"
     Then I see "Apple" in the daily log
     And the daily total is 95 calories
+
+  Scenario: Remove is hidden until a food is slid left
+    When I view the date "2026-11-01"
+    And I log the food "Apple" for "Breakfast"
+    Then the remove button for "Apple" is hidden
+    When I slide "Apple" to the left
+    Then the remove button for "Apple" is shown
+    When I slide "Apple" to the right
+    Then the remove button for "Apple" is hidden

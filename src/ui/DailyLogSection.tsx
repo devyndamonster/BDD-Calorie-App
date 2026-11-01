@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, List, Selector } from 'antd-mobile'
+import { Button, Card, Form, Input, List, Selector, SwipeAction } from 'antd-mobile'
 import type { Food } from '../domain/food'
 import { MEALS, dailyTotal, entriesByMeal, type LogEntry, type Meal } from '../domain/log'
 
@@ -62,17 +62,14 @@ export default function DailyLogSection({
               {group.entries.map((entry) => {
                 const food = foods.find((f) => f.id === entry.foodId)
                 return (
-                  <List.Item
+                  <SwipeAction
                     key={entry.id}
-                    data-testid="log-item"
-                    extra={
-                      <Button size="mini" color="danger" fill="outline" onClick={() => onRemove(entry.id)}>
-                        Remove
-                      </Button>
-                    }
+                    rightActions={[
+                      { key: 'remove', text: 'Remove', color: 'danger', onClick: () => onRemove(entry.id) },
+                    ]}
                   >
-                    {food?.name ?? 'Unknown food'}
-                  </List.Item>
+                    <List.Item data-testid="log-item">{food?.name ?? 'Unknown food'}</List.Item>
+                  </SwipeAction>
                 )
               })}
             </List>
