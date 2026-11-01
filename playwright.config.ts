@@ -9,6 +9,7 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   reporter: 'html',
+  snapshotPathTemplate: 'features/__screenshots__/{testFileName}/{arg}-{projectName}-{platform}{ext}',
   use: { baseURL: 'http://localhost:5173' },
   projects: [{ name: 'iphone-webkit', use: { ...devices['iPhone 15'] } }],
   webServer: {

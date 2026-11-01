@@ -88,6 +88,11 @@ export default function FoodSection({ foods, onAdd }: Props) {
           </List.Item>
         ))}
       </List>
+      {foods.length === 0 && (
+        <div className="empty-note" data-testid="food-list-empty">
+          No foods yet
+        </div>
+      )}
     </Card>
   )
 }

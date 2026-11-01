@@ -1,10 +1,8 @@
-import { expect, type Page } from '@playwright/test'
+import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { foodListEmpty, logItems, logSummary, foodItems } from '../support/ui'
 
 const { Given, When, Then } = createBdd()
-
-const foodItems = (page: Page) => page.getByTestId('food-item')
-const logItems = (page: Page) => page.getByTestId('log-item')
 
 Given('I open the app', async ({ page }) => {
   await page.goto('/')
@@ -15,7 +13,9 @@ When('I reload the app', async ({ page }) => {
 })
 
 Then('I see the heading {string}', async ({ page }, name: string) => {
-  await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible()
+  const heading = page.getByRole('heading', { name, level: 1 })
+  await expect(heading).toBeVisible()
+  await expect(heading).toHaveScreenshot()
 })
 
 When('I add a food {string} with {int} calories', async ({ page }, name: string, calories: number) => {
@@ -29,15 +29,19 @@ Then(
   async ({ page }, name: string, calories: number) => {
     const item = foodItems(page).filter({ hasText: name })
     await expect(item).toContainText(`${calories} kcal`)
+    await expect(item).toHaveScreenshot()
   },
 )
 
 Then('I see the error {string}', async ({ page }, message: string) => {
-  await expect(page.getByText(message)).toBeVisible()
+  const error = page.getByText(message)
+  await expect(error).toBeVisible()
+  await expect(error).toHaveScreenshot()
 })
 
 Then('the food list is empty', async ({ page }) => {
   await expect(foodItems(page)).toHaveCount(0)
+  await expect(foodListEmpty(page)).toHaveScreenshot()
 })
 
 When('I view the date {string}', async ({ page }, date: string) => {
@@ -54,13 +58,18 @@ When('I remove {string} from the daily log', async ({ page }, name: string) => {
 })
 
 Then('I see {string} in the daily log', async ({ page }, name: string) => {
-  await expect(logItems(page).filter({ hasText: name })).toHaveCount(1)
+  const item = logItems(page).filter({ hasText: name })
+  await expect(item).toHaveCount(1)
+  await expect(item).toHaveScreenshot()
 })
 
 Then('the daily log is empty', async ({ page }) => {
   await expect(logItems(page)).toHaveCount(0)
+  await expect(logSummary(page)).toHaveScreenshot()
 })
 
 Then('the daily total is {int} calories', async ({ page }, total: number) => {
-  await expect(page.getByText(`Total: ${total} kcal`)).toBeVisible()
+  const totalText = page.getByText(`Total: ${total} kcal`)
+  await expect(totalText).toBeVisible()
+  await expect(totalText).toHaveScreenshot()
 })

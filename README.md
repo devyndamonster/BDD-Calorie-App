@@ -14,6 +14,7 @@ npm install
 npm run dev        # start the dev server
 npm test           # Vitest unit tests
 npm run test:bdd   # Playwright-BDD scenarios (iPhone WebKit)
+npm run test:bdd:update  # accept intentional visual changes (screenshots in features/__screenshots__)
 ```
 
 ## Food data

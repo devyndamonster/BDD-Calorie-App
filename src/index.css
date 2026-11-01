@@ -29,6 +29,12 @@ main {
   padding-top: 0;
 }
 
+.empty-note {
+  padding: 12px;
+  text-align: center;
+  color: var(--adm-color-weak);
+}
+
 .total {
   margin-top: 12px;
   padding: 12px;

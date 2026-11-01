@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:bdd": "bddgen && playwright test",
+    "test:bdd:update": "bddgen && playwright test --update-snapshots",
     "data:download": "node scripts/download-usda.mjs",
     "data:build": "node --experimental-strip-types --no-warnings scripts/build-food-data.ts"
   },

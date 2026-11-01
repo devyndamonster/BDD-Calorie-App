@@ -44,6 +44,7 @@ export default function DailyLogSection({
       <Button block color="primary" size="large" disabled={foods.length === 0} onClick={() => onLog(foodId)}>
         Log food
       </Button>
+      <div data-testid="log-summary">
       <List data-testid="log-list">
         {dayEntries.map((entry) => {
           const food = foods.find((f) => f.id === entry.foodId)
@@ -63,6 +64,7 @@ export default function DailyLogSection({
         })}
       </List>
       <div className="total">Total: {dailyTotal(entries, foods, date)} kcal</div>
+      </div>
     </Card>
   )
 }
