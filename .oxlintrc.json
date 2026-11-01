@@ -4,5 +4,14 @@
   "rules": {
     "react/rules-of-hooks": "error",
     "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["features/support/ui.ts"],
+      "jsPlugins": ["./lint/bdd-screenshots-plugin.js"],
+      "rules": {
+        "bdd-screenshots/min-height": ["error", { "minHeight": 100 }]
+      }
+    }
+  ]
 }

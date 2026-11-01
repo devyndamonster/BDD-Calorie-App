@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
-import { openTab, expectSnapshot } from '../support/ui'
+import { openTab, expectSnapshot, tabContent } from '../support/ui'
 
 const { When, Then } = createBdd()
 
@@ -14,8 +14,10 @@ Then('I see the budget summary {string}', async ({ page }, summary: string) => {
   await openTab(page, 'Log')
   const budget = page.getByTestId('budget-summary')
   await expect(budget).toHaveText(summary)
-  await expectSnapshot(page, budget)
+  await expectSnapshot(page, tabContent(page))
 })
+
+
 
 
 

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
-import { expectSnapshot, openTab } from '../support/ui'
+import { expectSnapshot, openTab, tabContent } from '../support/ui'
 
 const { Then } = createBdd()
 
@@ -8,7 +8,7 @@ Then('I see {string} under {string}', async ({ page }, name: string, meal: strin
   await openTab(page, 'Log')
   const item = page.getByTestId(`meal-${meal}`).getByTestId('log-item').filter({ hasText: name })
   await expect(item).toHaveCount(1)
-  await expectSnapshot(page, page.getByTestId(`meal-${meal}`))
+  await expectSnapshot(page, tabContent(page))
 })
 
 Then('I do not see the meal {string}', async ({ page }, meal: string) => {

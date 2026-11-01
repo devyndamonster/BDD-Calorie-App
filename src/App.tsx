@@ -42,6 +42,7 @@ export default function App() {
       <NavBar back={null}>
         <h1 className="page-title">Calorie Tracker</h1>
       </NavBar>
+      <div data-testid="tab-content">
       {tab === 'log' && (
         <>
           <BudgetSummary consumed={dailyTotal(entries, foods, date)} budget={budgetForDate(budgets, date)} />
@@ -59,6 +60,7 @@ export default function App() {
       )}
       {tab === 'food' && <FoodSection foods={foods} onAdd={addFood} />}
       {tab === 'me' && <BudgetSection onSetBudget={updateBudget} />}
+      </div>
       <Tabs active={tab} onChange={setTab} />
     </main>
   )
