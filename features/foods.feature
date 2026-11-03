@@ -5,6 +5,11 @@ Feature: Foods
     When I add a food "Apple" with 95 calories
     Then I see the food "Apple" with 95 calories in the food list
 
+  Scenario: Create a food with a serving size
+    Given I open the app
+    When I add a food "Apple" with 95 calories per "1 medium"
+    Then I see the food "Apple" with 95 calories per "1 medium" in the food list
+
   Scenario: A food needs a name
     Given I open the app
     When I add a food "" with 95 calories

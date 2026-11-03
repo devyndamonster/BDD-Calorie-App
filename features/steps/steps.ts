@@ -36,6 +36,27 @@ Then(
   },
 )
 
+When(
+  'I add a food {string} with {int} calories per {string}',
+  async ({ page }, name: string, calories: number, serving: string) => {
+    await openTab(page, 'Food')
+    await page.getByLabel('Food name').fill(name)
+    await page.getByLabel('Calories').fill(String(calories))
+    await page.getByLabel('Serving size').fill(serving)
+    await page.getByRole('button', { name: 'Add food' }).click()
+  },
+)
+
+Then(
+  'I see the food {string} with {int} calories per {string} in the food list',
+  async ({ page }, name: string, calories: number, serving: string) => {
+    await openTab(page, 'Food')
+    const item = foodItems(page).filter({ hasText: name })
+    await expect(item).toContainText(`${calories} kcal / ${serving}`)
+    await expectSnapshot(page, tabContent(page))
+  },
+)
+
 Then('I see the error {string}', async ({ page }, message: string) => {
   const error = page.getByText(message)
   await expect(error).toBeVisible()

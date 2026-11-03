@@ -26,8 +26,8 @@ export default function App() {
     saveBudgets(next)
   }
 
-  function addFood(name: string, calories: number) {
-    const next = [...foods, createFood(name, calories)]
+  function addFood(name: string, calories: number, serving: string) {
+    const next = [...foods, createFood(name, calories, serving)]
     setFoods(next)
     saveFoods(next)
   }

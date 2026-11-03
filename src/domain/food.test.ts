@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createFood, validateFood } from './food'
+import { createFood, describeCalories, validateFood } from './food'
 
 describe('validateFood', () => {
   it('accepts a named food with zero or more calories', () => {
@@ -26,5 +26,20 @@ describe('createFood', () => {
 
   it('throws on invalid input', () => {
     expect(() => createFood('', 10)).toThrow('Name is required')
+  })
+
+  it('keeps a trimmed serving and omits a blank one', () => {
+    expect(createFood('Apple', 95, ' 1 medium ').serving).toBe('1 medium')
+    expect(createFood('Apple', 95, '  ')).not.toHaveProperty('serving')
+  })
+})
+
+describe('describeCalories', () => {
+  it('shows calories per serving when a serving is set', () => {
+    expect(describeCalories({ id: '1', name: 'Apple', calories: 95, serving: '1 medium' })).toBe('95 kcal / 1 medium')
+  })
+
+  it('shows only calories without a serving', () => {
+    expect(describeCalories({ id: '1', name: 'Apple', calories: 95 })).toBe('95 kcal')
   })
 })

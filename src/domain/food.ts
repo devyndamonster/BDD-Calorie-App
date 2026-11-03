@@ -2,6 +2,7 @@ export type Food = {
   id: string
   name: string
   calories: number
+  serving?: string
 }
 
 export function validateName(name: string): string | null {
@@ -16,8 +17,13 @@ export function validateFood(name: string, calories: number): string | null {
   return validateName(name) ?? validateCalories(calories)
 }
 
-export function createFood(name: string, calories: number): Food {
+export function createFood(name: string, calories: number, serving = ''): Food {
   const error = validateFood(name, calories)
   if (error) throw new Error(error)
-  return { id: crypto.randomUUID(), name: name.trim(), calories }
+  const trimmed = serving.trim()
+  return { id: crypto.randomUUID(), name: name.trim(), calories, ...(trimmed && { serving: trimmed }) }
+}
+
+export function describeCalories(food: Food): string {
+  return food.serving ? `${food.calories} kcal / ${food.serving}` : `${food.calories} kcal`
 }
