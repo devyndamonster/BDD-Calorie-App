@@ -1,6 +1,29 @@
 import { describe, expect, it } from 'vitest'
 import type { Food } from './food'
-import { createLogEntry, dailyTotal, entriesByMeal, entriesForDate, todayIso } from './log'
+import { createLogEntry, dailyTotal, entriesByMeal, entriesForDate, findFoods, quickSelectFoods, todayIso } from './log'
+
+describe('quick select', () => {
+  const foods: Food[] = ['A', 'B', 'C', 'D', 'E'].map((n) => ({ id: n, name: n, calories: 1 }))
+  const log = (...ids: string[]) => ids.map((id) => createLogEntry(id, '2026-11-01', 'Snack'))
+
+  it('shows the three most recently logged distinct foods', () => {
+    expect(quickSelectFoods(log('A', 'B', 'C', 'D', 'A'), foods).map((f) => f.id)).toEqual(['A', 'D', 'C'])
+  })
+
+  it('fills remaining slots with the newest unlogged foods', () => {
+    expect(quickSelectFoods(log('B'), foods).map((f) => f.id)).toEqual(['B', 'E', 'D'])
+  })
+
+  it('ignores entries for deleted foods', () => {
+    expect(quickSelectFoods(log('Z'), foods).map((f) => f.id)).toEqual(['E', 'D', 'C'])
+  })
+
+  it('finds foods by case-insensitive partial name', () => {
+    const named = [{ id: '1', name: 'Green Apple', calories: 1 }, { id: '2', name: 'Banana', calories: 1 }]
+    expect(findFoods(named, ' apple ').map((f) => f.id)).toEqual(['1'])
+    expect(findFoods(named, '')).toEqual([])
+  })
+})
 
 const apple: Food = { id: 'a', name: 'Apple', calories: 95 }
 const banana: Food = { id: 'b', name: 'Banana', calories: 105 }

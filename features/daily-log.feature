@@ -56,3 +56,22 @@ Feature: Daily log
     Then the remove button for "Apple" is shown
     When I slide "Apple" to the right
     Then the remove button for "Apple" is hidden
+
+  Scenario: Only the three most recent foods are offered for quick select
+    Given I add a food "Cherry" with 5 calories
+    And I add a food "Date" with 20 calories
+    And I add a food "Egg" with 70 calories
+    When I view the date "2026-11-01"
+    And I log the food "Cherry" for "Breakfast"
+    Then the quick select foods are "Cherry, Egg, Date"
+
+  Scenario: Log a food that is not in quick select by searching
+    Given I add a food "Cherry" with 5 calories
+    And I add a food "Date" with 20 calories
+    And I add a food "Egg" with 70 calories
+    When I view the date "2026-11-01"
+    And I search for the food "ban"
+    And I choose the found food "Banana"
+    And I log the selected food for "Lunch"
+    Then I see "Banana" in the daily log
+    And the daily total is 105 calories
