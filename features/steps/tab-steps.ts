@@ -15,7 +15,7 @@ Then('I see the {string} tab selected', async ({ page }, name: string) => {
 })
 
 Then('I see the daily log section', async ({ page }) => {
-  await expect(page.getByTestId('log-summary')).toBeVisible()
+  await expect(page.getByLabel('Food to log')).toBeVisible()
     await expectSnapshot(page, tabContent(page))
   })
 
@@ -31,7 +31,7 @@ Then('I see the budget form', async ({ page }) => {
 })
 
 Then('I do not see the daily log section', async ({ page }) => {
-  await expect(page.getByTestId('log-summary')).toHaveCount(0)
+  await expect(page.getByLabel('Food to log')).toHaveCount(0)
     await expectSnapshot(page, tabContent(page))
   })
 
