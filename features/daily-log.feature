@@ -11,6 +11,11 @@ Feature: Daily log
     Then I see "Apple" in the daily log
     And the daily total is 95 calories
 
+  Scenario: Logging a food shows a toast
+    When I view the date "2026-11-01"
+    And I log the food "Apple" for "Breakfast"
+    Then I see the toast "Logged Apple to Breakfast"
+
   Scenario: Totals add up across the day
     When I view the date "2026-11-01"
     And I log the food "Apple" for "Breakfast"

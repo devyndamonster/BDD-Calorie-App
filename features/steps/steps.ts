@@ -97,6 +97,10 @@ When('I log the food {string} for {string}', async ({ page }, name: string, meal
   await page.getByRole('button', { name: meal, exact: true }).click()
 })
 
+Then('I see the toast {string}', async ({ page }, message: string) => {
+  await expect(page.getByTestId('log-toast').filter({ hasText: message })).toBeVisible()
+})
+
 When('I remove {string} from the daily log', async ({ page }, name: string) => {
   await openTab(page, 'Log')
   await dragLogItem(page, name, 'left')
