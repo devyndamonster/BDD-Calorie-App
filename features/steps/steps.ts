@@ -13,9 +13,8 @@ When('I reload the app', async ({ page }) => {
   await page.reload()
 })
 
-Then('I see the heading {string}', async ({ page }, name: string) => {
-  const heading = page.getByRole('heading', { name, level: 1 })
-  await expect(heading).toBeVisible()
+Then('I do not see an app title', async ({ page }) => {
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(0)
   await expectSnapshot(page, tabContent(page))
 })
 
@@ -122,9 +121,8 @@ Then('the daily log is empty', async ({ page }) => {
 })
 
 Then('the daily total is {int} calories', async ({ page }, total: number) => {
-  await openTab(page, 'Log')
   await expect(page.getByTestId('budget-summary')).toHaveText(new RegExp(`^${total}(/\\d+)? Cal$`))
-  await expectSnapshot(page, tabContent(page))
+    await expectSnapshot(page, tabContent(page), { withHeader: true })
 })
 
 When('I slide {string} to the {word}', async ({ page }, name: string, direction: 'left' | 'right') => {

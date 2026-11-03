@@ -22,6 +22,12 @@ Feature: Tabs
     Then I do not see the daily log section
     And I do not see the budget form
 
+  Scenario: The budget summary stays visible on every tab
+    When I set the budget to 2050 calories
+    Then I see the budget summary "0/2050 Cal"
+    When I open the "Food" tab
+    Then I see the budget summary "0/2050 Cal"
+
   Scenario: The date is kept when switching tabs
     When I view the date "2026-11-02"
     And I open the "Me" tab

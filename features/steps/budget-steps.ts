@@ -11,10 +11,9 @@ When('I set the budget to {int} calories', async ({ page }, calories: number) =>
 })
 
 Then('I see the budget summary {string}', async ({ page }, summary: string) => {
-  await openTab(page, 'Log')
   const budget = page.getByTestId('budget-summary')
   await expect(budget).toHaveText(summary)
-  await expectSnapshot(page, tabContent(page))
+  await expectSnapshot(page, tabContent(page), { withHeader: true })
 })
 
 

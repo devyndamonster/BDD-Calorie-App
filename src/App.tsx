@@ -1,4 +1,3 @@
-import { NavBar } from 'antd-mobile'
 import { useState } from 'react'
 import { budgetForDate, setBudget, type DailyBudget } from './domain/budget'
 import { createFood, editFood, type Food } from './domain/food'
@@ -45,13 +44,10 @@ export default function App() {
 
   return (
     <main>
-      <NavBar back={null}>
-        <h1 className="page-title">Calorie Tracker</h1>
-      </NavBar>
+      <BudgetSummary consumed={dailyTotal(entries, foods, date)} budget={budgetForDate(budgets, date)} />
       <div data-testid="tab-content">
       {tab === 'log' && (
         <>
-          <BudgetSummary consumed={dailyTotal(entries, foods, date)} budget={budgetForDate(budgets, date)} />
           <DailyLogSection
             foods={foods}
             entries={entries}
