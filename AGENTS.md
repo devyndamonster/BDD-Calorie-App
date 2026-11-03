@@ -25,4 +25,4 @@ Node is managed by mise (`mise install`, then `npm install`).
 
 - Write or update a `.feature` scenario first for any user-visible behavior; put business rules in `src/domain` with unit tests.
 - Only update screenshot baselines for real visual changes. Screenshots under 100px tall fail lint; capture a larger parent component instead.
-- Before finishing, lint, build, unit tests and BDD tests must all pass (CI runs them).
+- Before finishing, lint, build, unit tests and BDD tests must all pass locally (there is no CI at the moment).
