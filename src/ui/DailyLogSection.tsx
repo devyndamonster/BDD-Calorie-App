@@ -1,4 +1,6 @@
 import { Button, Card, Form, Input, List, Selector, SwipeAction } from 'antd-mobile'
+import { useCallback, useState } from 'react'
+import LogToast from './LogToast'
 import type { Food } from '../domain/food'
 import { MEALS, dailyTotal, entriesByMeal, type LogEntry, type Meal } from '../domain/log'
 
@@ -24,10 +26,13 @@ export default function DailyLogSection({
   onRemove,
 }: Props) {
   const groups = entriesByMeal(entries, date)
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
+  const dismissToast = useCallback(() => setToast(null), [])
   const foodId = foods.some((f) => f.id === selectedFoodId) ? selectedFoodId : (foods[0]?.id ?? '')
 
   return (
     <Card title="Daily log" className="section">
+      {toast && <LogToast id={toast.id} message={toast.message} onDone={dismissToast} />}
       <Form layout="vertical">
         <Form.Item label="Date">
           <Input aria-label="Date" type="date" value={date} onChange={(value) => value && onDateChange(value)} />
@@ -48,7 +53,11 @@ export default function DailyLogSection({
             color="primary"
             size="small"
             disabled={foods.length === 0}
-            onClick={() => onLog(foodId, meal)}
+            onClick={() => {
+              onLog(foodId, meal)
+              const name = foods.find((f) => f.id === foodId)?.name
+              setToast({ id: Date.now(), message: `Logged ${name} to ${meal}` })
+            }}
           >
             {meal}
           </Button>
