@@ -32,6 +32,26 @@ export function dailyTotal(entries: LogEntry[], foods: Food[], date: string): nu
   }, 0)
 }
 
+export const QUICK_SELECT_LIMIT = 3
+
+// Entries are stored oldest first, so the most recently logged foods come from the end.
+// Foods that were never logged fill any remaining slots, newest first.
+export function quickSelectFoods(entries: LogEntry[], foods: Food[], limit = QUICK_SELECT_LIMIT): Food[] {
+  const result: Food[] = []
+  const add = (food: Food | undefined) => {
+    if (food && result.length < limit && !result.includes(food)) result.push(food)
+  }
+  for (let i = entries.length - 1; i >= 0; i--) add(foods.find((f) => f.id === entries[i].foodId))
+  for (let i = foods.length - 1; i >= 0; i--) add(foods[i])
+  return result
+}
+
+export function findFoods(foods: Food[], query: string): Food[] {
+  const text = query.trim().toLowerCase()
+  if (!text) return []
+  return foods.filter((food) => food.name.toLowerCase().includes(text))
+}
+
 export function entriesByMeal(entries: LogEntry[], date: string): { meal: Meal; entries: LogEntry[] }[] {
   const dayEntries = entriesForDate(entries, date)
   return MEALS.map((meal) => ({ meal, entries: dayEntries.filter((entry) => entry.meal === meal) })).filter(

@@ -142,3 +142,22 @@ Then('the remove button for {string} is hidden', async ({ page }, name: string) 
   await isRemoveRevealed(page, name)
   await expectSnapshot(page, tabContent(page))
 })
+Then('the quick select foods are {string}', async ({ page }, names: string) => {
+  await openTab(page, 'Log')
+  const options = page.getByLabel('Food to log').locator('.adm-selector-item')
+  await expect(options).toHaveText(names.split(', '))
+  await expectSnapshot(page, tabContent(page))
+})
+
+When('I search for the food {string}', async ({ page }, text: string) => {
+  await openTab(page, 'Log')
+  await page.getByRole('textbox', { name: 'Find a food' }).fill(text)
+})
+
+When('I choose the found food {string}', async ({ page }, name: string) => {
+  await page.getByTestId('food-match').filter({ hasText: name }).click()
+})
+
+When('I log the selected food for {string}', async ({ page }, meal: string) => {
+  await page.getByRole('button', { name: meal, exact: true }).click()
+})

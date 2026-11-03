@@ -2,7 +2,7 @@ import { Button, Card, Form, Input, List, Selector, SwipeAction } from 'antd-mob
 import { useCallback, useState } from 'react'
 import LogToast from './LogToast'
 import type { Food } from '../domain/food'
-import { MEALS, dailyTotal, entriesByMeal, type LogEntry, type Meal } from '../domain/log'
+import { MEALS, dailyTotal, entriesByMeal, findFoods, quickSelectFoods, type LogEntry, type Meal } from '../domain/log'
 
 type Props = {
   foods: Food[]
@@ -28,7 +28,12 @@ export default function DailyLogSection({
   const groups = entriesByMeal(entries, date)
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
   const dismissToast = useCallback(() => setToast(null), [])
-  const foodId = foods.some((f) => f.id === selectedFoodId) ? selectedFoodId : (foods[0]?.id ?? '')
+  const quick = quickSelectFoods(entries, foods)
+  const [search, setSearch] = useState('')
+  const matches = findFoods(foods, search)
+  const foodId = foods.some((f) => f.id === selectedFoodId) ? selectedFoodId : (quick[0]?.id ?? '')
+  const selected = foods.find((f) => f.id === foodId)
+  const options = selected && !quick.includes(selected) ? [...quick, selected] : quick
 
   return (
     <Card title="Daily log" className="section">
@@ -40,10 +45,29 @@ export default function DailyLogSection({
         <Form.Item label="Food to log">
           <Selector
             aria-label="Food to log"
-            options={foods.map((food) => ({ label: food.name, value: food.id }))}
+            options={options.map((food) => ({ label: food.name, value: food.id }))}
             value={foodId ? [foodId] : []}
             onChange={(values) => values[0] && onSelectFood(values[0])}
           />
+        </Form.Item>
+        <Form.Item label="Find a food">
+          <Input aria-label="Find a food" placeholder="Search your foods" value={search} onChange={setSearch} clearable />
+          {matches.length > 0 && (
+            <List data-testid="food-matches">
+              {matches.map((food) => (
+                <List.Item
+                  key={food.id}
+                  data-testid="food-match"
+                  onClick={() => {
+                    onSelectFood(food.id)
+                    setSearch('')
+                  }}
+                >
+                  {food.name}
+                </List.Item>
+              ))}
+            </List>
+          )}
         </Form.Item>
       </Form>
       <div className="meal-buttons">
