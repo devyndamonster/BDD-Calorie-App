@@ -31,9 +31,12 @@ main {
   color: var(--adm-color-weak);
 }
 
-.page-title {
-  margin: 0;
-  font-size: 18px;
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--adm-color-background);
+  border-bottom: 1px solid var(--adm-color-border);
 }
 
 .section {

@@ -1,4 +1,3 @@
-import { Card } from 'antd-mobile'
 import { budgetSummary } from '../domain/budget'
 
 type Props = {
@@ -8,10 +7,10 @@ type Props = {
 
 export default function BudgetSummary({ consumed, budget }: Props) {
   return (
-    <Card className="section">
+    <header className="app-header">
       <div className="budget-summary" data-testid="budget-summary">
         {budgetSummary(consumed, budget)}
       </div>
-    </Card>
+    </header>
   )
 }
