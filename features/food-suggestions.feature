@@ -18,7 +18,7 @@ Feature: Food suggestions
     When I type "banana" in the food name
     And I choose the suggestion "Bananas, raw"
     And I add the food
-    Then I see the food "Bananas, raw" with 112 calories in the food list
+    Then I see the food "Bananas, raw" with 112 calories per "1 serving" in the food list
 
   Scenario: No suggestions for unknown text
     When I type "zzzzqq" in the food name
