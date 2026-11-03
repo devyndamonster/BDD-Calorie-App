@@ -10,10 +10,31 @@ export async function openTab(page: Page, name: string) {
 }
 
 // Clip to a rounded size so sub-pixel layout shifts don't change the image dimensions.
-export async function expectSnapshot(page: Page, locator: Locator) {
+export async function expectSnapshot(page: Page, locator: Locator, options: { withHeader?: boolean } = {}) {
+  if (options.withHeader) return expectSnapshotWithHeader(page, locator)
   await locator.scrollIntoViewIfNeeded()
   const box = await locator.boundingBox()
   if (!box) throw new Error('Cannot snapshot an element that is not visible')
+  await expectClip(page, box)
+}
+
+// Snapshots the sticky header together with the content below it.
+async function expectSnapshotWithHeader(page: Page, locator: Locator) {
+  await page.evaluate(() => window.scrollTo(0, 0))
+  const header = await page.getByTestId('app-header').boundingBox()
+  const box = await locator.boundingBox()
+  if (!header || !box) throw new Error('Cannot snapshot an element that is not visible')
+  const x = Math.min(header.x, box.x)
+  const y = Math.min(header.y, box.y)
+  await expectClip(page, {
+    x,
+    y,
+    width: Math.max(header.x + header.width, box.x + box.width) - x,
+    height: Math.max(header.y + header.height, box.y + box.height) - y,
+  })
+}
+
+async function expectClip(page: Page, box: { x: number; y: number; width: number; height: number }) {
   const scroll = await page.evaluate(() => ({ x: window.scrollX, y: window.scrollY }))
   const x = Math.round(box.x + scroll.x)
   const y = Math.round(box.y + scroll.y)

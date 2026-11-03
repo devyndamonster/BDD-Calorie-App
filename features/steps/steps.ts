@@ -122,7 +122,7 @@ Then('the daily log is empty', async ({ page }) => {
 
 Then('the daily total is {int} calories', async ({ page }, total: number) => {
   await expect(page.getByTestId('budget-summary')).toHaveText(new RegExp(`^${total}(/\\d+)? Cal$`))
-  await expectSnapshot(page, tabContent(page))
+    await expectSnapshot(page, tabContent(page), { withHeader: true })
 })
 
 When('I slide {string} to the {word}', async ({ page }, name: string, direction: 'left' | 'right') => {
