@@ -60,7 +60,37 @@ const minHeight = {
   },
 }
 
+const isCallTo = (node, name) => node.callee.type === 'Identifier' && node.callee.name === name
+
+const thenRequiresSnapshot = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description: 'Require every "Then" step to call expectSnapshot, so verified outcomes are also visually confirmed.',
+    },
+    schema: [{ type: 'object', properties: { snapshot: { type: 'string' } }, additionalProperties: false }],
+  },
+  create(context) {
+    const snapshot = context.options[0]?.snapshot ?? 'expectSnapshot'
+    const stack = []
+
+    return {
+      CallExpression(node) {
+        if (isCallTo(node, 'Then')) stack.push({ node, snapshotted: false })
+        else if (isCallTo(node, snapshot) && stack.length > 0) stack[stack.length - 1].snapshotted = true
+      },
+      'CallExpression:exit'(node) {
+        if (!isCallTo(node, 'Then')) return
+        const step = stack.pop()
+        if (!step.snapshotted) {
+          context.report({ node, message: `"Then" steps must call ${snapshot}() to visually confirm the result.` })
+        }
+      },
+    }
+  },
+}
+
 export default {
   meta: { name: 'bdd-screenshots' },
-  rules: { 'min-height': minHeight },
+  rules: { 'min-height': minHeight, 'then-requires-snapshot': thenRequiresSnapshot },
 }

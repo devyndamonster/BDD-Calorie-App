@@ -16,11 +16,13 @@ Then('I see the {string} tab selected', async ({ page }, name: string) => {
 
 Then('I see the daily log section', async ({ page }) => {
   await expect(page.getByTestId('log-summary')).toBeVisible()
-})
+    await expectSnapshot(page, tabContent(page))
+  })
 
 Then('I see the food form', async ({ page }) => {
   await expect(page.getByLabel('Food name')).toBeVisible()
-})
+    await expectSnapshot(page, tabContent(page))
+  })
 
 Then('I see the budget form', async ({ page }) => {
   const form = page.getByTestId('budget-form')
@@ -30,11 +32,13 @@ Then('I see the budget form', async ({ page }) => {
 
 Then('I do not see the daily log section', async ({ page }) => {
   await expect(page.getByTestId('log-summary')).toHaveCount(0)
-})
+    await expectSnapshot(page, tabContent(page))
+  })
 
 Then('I do not see the budget form', async ({ page }) => {
   await expect(page.getByTestId('budget-form')).toHaveCount(0)
-})
+    await expectSnapshot(page, tabContent(page))
+  })
 
 Then('the date is {string}', async ({ page }, date: string) => {
   const input = page.getByRole('textbox', { name: 'Date' })

@@ -14,4 +14,5 @@ Then('I see {string} under {string}', async ({ page }, name: string, meal: strin
 Then('I do not see the meal {string}', async ({ page }, meal: string) => {
   await openTab(page, 'Log')
   await expect(page.getByTestId(`meal-${meal}`)).toHaveCount(0)
-})
+    await expectSnapshot(page, tabContent(page))
+  })

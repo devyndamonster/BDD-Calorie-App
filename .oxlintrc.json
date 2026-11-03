@@ -12,6 +12,13 @@
       "rules": {
         "bdd-screenshots/min-height": ["error", { "minHeight": 100 }]
       }
+    },
+    {
+      "files": ["features/steps/**/*.ts"],
+      "jsPlugins": ["./lint/bdd-screenshots-plugin.js"],
+      "rules": {
+        "bdd-screenshots/then-requires-snapshot": "error"
+      }
     }
   ]
 }
