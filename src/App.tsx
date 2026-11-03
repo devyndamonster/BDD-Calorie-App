@@ -1,7 +1,7 @@
 import { NavBar } from 'antd-mobile'
 import { useState } from 'react'
 import { budgetForDate, setBudget, type DailyBudget } from './domain/budget'
-import { createFood, type Food } from './domain/food'
+import { createFood, editFood, type Food } from './domain/food'
 import { createLogEntry, dailyTotal, todayIso, type LogEntry } from './domain/log'
 import { loadBudgets, saveBudgets } from './storage/budgetRepository'
 import { loadFoods, saveFoods } from './storage/foodRepository'
@@ -32,6 +32,12 @@ export default function App() {
     saveFoods(next)
   }
 
+  function updateFood(id: string, name: string, calories: number, serving: string) {
+    const next = foods.map((f) => (f.id === id ? editFood(f, name, calories, serving) : f))
+    setFoods(next)
+    saveFoods(next)
+  }
+
   function updateEntries(next: LogEntry[]) {
     setEntries(next)
     saveEntries(next)
@@ -58,7 +64,7 @@ export default function App() {
           />
         </>
       )}
-      {tab === 'food' && <FoodSection foods={foods} onAdd={addFood} />}
+      {tab === 'food' && <FoodSection foods={foods} onAdd={addFood} onEdit={updateFood} />}
       {tab === 'me' && <BudgetSection onSetBudget={updateBudget} />}
       </div>
       <Tabs active={tab} onChange={setTab} />

@@ -24,6 +24,13 @@ export function createFood(name: string, calories: number, serving = ''): Food {
   return { id: crypto.randomUUID(), name: name.trim(), calories, ...(trimmed && { serving: trimmed }) }
 }
 
+export function editFood(food: Food, name: string, calories: number, serving = ''): Food {
+  const error = validateFood(name, calories)
+  if (error) throw new Error(error)
+  const trimmed = serving.trim()
+  return { id: food.id, name: name.trim(), calories, ...(trimmed && { serving: trimmed }) }
+}
+
 export function describeCalories(food: Food): string {
   return food.serving ? `${food.calories} kcal / ${food.serving}` : `${food.calories} kcal`
 }

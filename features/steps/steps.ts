@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
-import { foodItems, logItems, openTab, expectSnapshot, tabContent, dragLogItem, isRemoveRevealed, removeAction } from '../support/ui'
+import { foodItems, logItems, openTab, expectSnapshot, tabContent, dragLogItem, dragFoodItem, editAction, isRemoveRevealed, removeAction } from '../support/ui'
 
 const { Given, When, Then } = createBdd()
 
@@ -62,6 +62,23 @@ Then('I see the error {string}', async ({ page }, message: string) => {
   await expect(error).toBeVisible()
   await expectSnapshot(page, tabContent(page))
 })
+
+When('I edit the food {string}', async ({ page }, name: string) => {
+  await openTab(page, 'Food')
+  await dragFoodItem(page, name, 'right')
+  await editAction(page, name).click()
+})
+
+When(
+  'I change the food to {string} with {int} calories per {string}',
+  async ({ page }, name: string, calories: number, serving: string) => {
+    const dialog = page.getByTestId('edit-food')
+    await dialog.getByLabel('Food name').fill(name)
+    await dialog.getByLabel('Calories').fill(String(calories))
+    await dialog.getByLabel('Serving size').fill(serving)
+    await dialog.getByRole('button', { name: 'Save food' }).click()
+  },
+)
 
 Then('the food list is empty', async ({ page }) => {
   await openTab(page, 'Food')
