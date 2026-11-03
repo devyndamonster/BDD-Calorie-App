@@ -1,5 +1,6 @@
-import { Button, Card, Form, Input, List } from 'antd-mobile'
+import { Button, Card, Form, Input, List, SwipeAction } from 'antd-mobile'
 import { useMemo, useState } from 'react'
+import EditFoodPopup from './EditFoodPopup'
 import type { FoodSuggestion } from '../data/cleanFood'
 import { portionFor, searchFoods } from '../data/searchFoods'
 import { useFoodIndex } from '../data/useFoodIndex'
@@ -8,6 +9,7 @@ import { describeCalories, validateCalories, validateName, type Food } from '../
 type Props = {
   foods: Food[]
   onAdd: (name: string, calories: number, serving: string) => void
+  onEdit: (id: string, name: string, calories: number, serving: string) => void
 }
 
 type FormValues = { name?: string; calories?: string; serving?: string }
@@ -16,8 +18,10 @@ const toCalories = (value?: string) => (value === undefined || value.trim() === 
 
 const rule = (error: string | null) => (error ? Promise.reject(new Error(error)) : Promise.resolve())
 
-export default function FoodSection({ foods, onAdd }: Props) {
+export default function FoodSection({ foods, onAdd, onEdit }: Props) {
   const [form] = Form.useForm<FormValues>()
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const editing = foods.find((f) => f.id === editingId)
   const index = useFoodIndex()
   const [nameValue, setNameValue] = useState('')
   const [dismissed, setDismissed] = useState(false)
@@ -88,11 +92,24 @@ export default function FoodSection({ foods, onAdd }: Props) {
       </Form>
       <List data-testid="food-list">
         {foods.map((food) => (
-          <List.Item key={food.id} data-testid="food-item" extra={describeCalories(food)}>
-            {food.name}
-          </List.Item>
+          <SwipeAction
+            key={food.id}
+            leftActions={[{ key: 'edit', text: 'Edit', color: 'primary', onClick: () => setEditingId(food.id) }]}
+          >
+            <List.Item data-testid="food-item" extra={describeCalories(food)}>
+              {food.name}
+            </List.Item>
+          </SwipeAction>
         ))}
       </List>
+      {editing && (
+        <EditFoodPopup
+          key={editing.id}
+          food={editing}
+          onSave={(name, calories, serving) => onEdit(editing.id, name, calories, serving)}
+          onClose={() => setEditingId(null)}
+        />
+      )}
       {foods.length === 0 && (
         <div className="empty-note" data-testid="food-list-empty">
           No foods yet

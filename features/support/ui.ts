@@ -31,9 +31,23 @@ export async function expectSnapshot(page: Page, locator: Locator) {
 export const tabContent = (page: Page) => page.getByTestId('tab-content')
 
 export async function dragLogItem(page: Page, name: string, direction: 'left' | 'right') {
-  const item = logItems(page).filter({ hasText: name }).first()
+  await dragItem(logItems(page).filter({ hasText: name }).first(), direction)
+}
+
+export async function dragFoodItem(page: Page, name: string, direction: 'left' | 'right') {
+  await dragItem(foodItems(page).filter({ hasText: name }).first(), direction)
+}
+
+export const editAction = (page: Page, name: string) =>
+  foodItems(page)
+    .filter({ hasText: name })
+    .first()
+    .locator('xpath=ancestor::div[contains(concat(" ",normalize-space(@class)," ")," adm-swipe-action ")][1]')
+    .getByText('Edit', { exact: true })
+
+async function dragItem(item: Locator, direction: 'left' | 'right') {
   const box = await item.boundingBox()
-  if (!box) throw new Error(`Log item "${name}" is not visible`)
+  if (!box) throw new Error('Item is not visible')
   const y = box.y + box.height / 2
   const from = box.x + box.width * (direction === 'left' ? 0.8 : 0.2)
   const to = box.x + box.width * (direction === 'left' ? 0.2 : 0.8)
