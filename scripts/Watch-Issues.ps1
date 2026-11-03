@@ -53,10 +53,11 @@ function Test-IssueComplete($number) {
 
 function Invoke-Issue($issue) {
     $number = $issue.number
+    gh issue comment $number --body 'This issue was picked up by an agent. A pull request should eventually be created.'
+    if ($LASTEXITCODE -ne 0) { Write-Log "Failed to comment on issue #$number" }
+
     $promptFile = Join-Path ([IO.Path]::GetTempPath()) "copilot-issue-$number.txt"
-    $prompt = "Implement GitHub issue #$number ($($issue.title)) in this repository. " +
-        "Read it with 'gh issue view $number'. Work on a new branch, follow the repo conventions, make sure lint, build and tests pass, " +
-        "then open a pull request whose description contains 'Closes #$number'."
+    $prompt = "Use the implement-issue skill to implement GitHub issue #$number ($($issue.title))."
     Set-Content -Path $promptFile -Value $prompt -Encoding UTF8
 
     $command = "Set-Location '$repoRoot'; `$p = Get-Content -Raw '$promptFile'; copilot --yolo -i `$p"
