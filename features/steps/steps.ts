@@ -123,8 +123,7 @@ Then('the daily log is empty', async ({ page }) => {
 
 Then('the daily total is {int} calories', async ({ page }, total: number) => {
   await openTab(page, 'Log')
-  const totalText = page.getByText(`Total: ${total} kcal`)
-  await expect(totalText).toBeVisible()
+  await expect(page.getByTestId('budget-summary')).toHaveText(new RegExp(`^${total}(/\\d+)? Cal$`))
   await expectSnapshot(page, tabContent(page))
 })
 

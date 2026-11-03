@@ -2,7 +2,7 @@ import { Button, Card, Form, Input, List, Selector, SwipeAction } from 'antd-mob
 import { useCallback, useState } from 'react'
 import LogToast from './LogToast'
 import type { Food } from '../domain/food'
-import { MEALS, dailyTotal, entriesByMeal, findFoods, quickSelectFoods, type LogEntry, type Meal } from '../domain/log'
+import { MEALS, entriesByMeal, findFoods, quickSelectFoods, type LogEntry, type Meal } from '../domain/log'
 
 type Props = {
   foods: Food[]
@@ -108,7 +108,6 @@ export default function DailyLogSection({
             </List>
           </div>
         ))}
-        <div className="total">Total: {dailyTotal(entries, foods, date)} kcal</div>
       </div>
     </Card>
   )
